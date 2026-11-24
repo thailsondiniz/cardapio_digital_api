@@ -1,6 +1,5 @@
 import { criarMesa, buscarMesaId, buscarMesas, deletarMesa, atualizarMesa } from "./mesa.service.js";
 import { type Response, type Request } from 'express'
-import { Prisma } from '../../../generated/prisma/client.js'
 
 
 export async function criarMesaController(req: Request, res: Response){
