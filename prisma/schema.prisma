@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum StatusPedido {
+  RECEBIDO
+  EM_PREPARO
+  CONCLUIDO
+}
+
+enum StatusAtendimento {
+  ABERTO
+  AGUARDANDO_PAGAMENTO
+  FECHADO
+}
+
+enum StatusMesa{
+  DISPONIVEL
+  OCUPADA
+  INATIVA
+}
+
+model Cliente {
+  id           Int           @id @default(autoincrement())
+  nome         String
+  telefone     String        @unique
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  atendimentos Atendimento[]
+}
+
+model Produto {
+  id          Int          @id @default(autoincrement())
+  nome        String
+  descricao   String?
+  preco       Decimal @db.Decimal(10, 2)
+  disponivel  Boolean  @default(true)
+  itensPedido ItemPedido[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime     @default(now()) @updatedAt
+}
+
+model Pedido {
+  id            Int          @id @default(autoincrement())
+  atendimentoId Int
+  status        StatusPedido @default(RECEBIDO)
+  createdAt     DateTime     @default(now())
+
+  atendimento Atendimento  @relation(fields: [atendimentoId], references: [id])
+  itensPedido ItemPedido[]
+}
+
+model ItemPedido {
+  id            Int     @id @default(autoincrement())
+  pedidoId      Int
+  produtoId     Int
+  quantidade    Int
+  precoUnitario Decimal @db.Decimal(10, 2)
+  preco_total   Decimal @db.Decimal(10, 2)
+  pedido        Pedido  @relation(fields: [pedidoId], references: [id])
+  produto       Produto @relation(fields: [produtoId], references: [id])
+
+  @@unique([pedidoId, produtoId])
+}
+
+model Mesa {
+  id           Int           @id @default(autoincrement())
+  numero       Int           @unique
+  capacidade Int @default(4)
+  status StatusMesa @default(DISPONIVEL)
+  ativa Boolean @default(true)
+  qrCodeToken String @unique @default(uuid())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  atendimentos Atendimento[]
+}
+
+model Atendimento {
+  id        Int               @id @default(autoincrement())
+  clienteId Int
+  mesaId    Int
+  status    StatusAtendimento @default(ABERTO)
+  abertoEm  DateTime          @default(now())
+  fechadoEm DateTime?
+
+  cliente Cliente  @relation(fields: [clienteId], references: [id])
+  mesa    Mesa     @relation(fields: [mesaId], references: [id])
+  pedidos Pedido[]
+}
