@@ -2,7 +2,7 @@ import { criarMesa, buscarMesaId, buscarMesas, deletarMesa, atualizarMesa } from
 import { type Response, type Request } from 'express'
 
 
-export async function criarMesaController(req: Request, res: Response){
+export async function criarMesaController(req: Request, res: Response) {
     try {
         const mesa = await criarMesa(req.body)
         return res.status(201).json(mesa)
@@ -14,7 +14,7 @@ export async function criarMesaController(req: Request, res: Response){
     }
 }
 
-export async function buscarMesasController(req: Request, res: Response){
+export async function buscarMesasController(req: Request, res: Response) {
     try {
         const mesas = await buscarMesas()
         return res.status(200).json(mesas)
@@ -26,17 +26,17 @@ export async function buscarMesasController(req: Request, res: Response){
     }
 }
 
-export async function buscarMesaIdController(req: Request, res: Response){
+export async function buscarMesaIdController(req: Request, res: Response) {
     try {
         const idMesa = Number(req.params.id)
-        
-        if(!idMesa){
+
+        if (!idMesa) {
             return res.status(404).json({
                 message: "Mesa não encontrada"
             })
         }
         const mesa = await buscarMesaId(idMesa)
-        
+
         return res.status(200).json(mesa)
     } catch (error) {
         console.error(error)
@@ -46,7 +46,7 @@ export async function buscarMesaIdController(req: Request, res: Response){
     }
 }
 
-export async function atualizarMesaController(req: Request, res: Response){
+export async function atualizarMesaController(req: Request, res: Response) {
     try {
         const idMesa = Number(req.params.id)
         const mesa = req.body
@@ -71,7 +71,7 @@ export async function atualizarMesaController(req: Request, res: Response){
 }
 
 
-export async function deletarMesaController(req: Request, res: Response){
+export async function deletarMesaController(req: Request, res: Response) {
     try {
         const idMesa = Number(req.params.id)
 
